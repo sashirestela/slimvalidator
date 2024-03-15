@@ -22,6 +22,7 @@ public class Validator {
     /**
      * Check if all the object's fields accomplish their constraints.
      * 
+     * @param <T>    Generic type.
      * @param object Whose fields will be validated.
      * @return List of all the unaccomplished constraints.
      */

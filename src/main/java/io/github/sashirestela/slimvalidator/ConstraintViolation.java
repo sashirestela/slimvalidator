@@ -34,6 +34,8 @@ public class ConstraintViolation {
     /**
      * Prepare the violation message using the constraint's message field as template and replacing
      * placeholders with the other constraint's fields.
+     * 
+     * @return The concrete violation message.
      */
     public String getMessage() {
         final String TMPL_LOOP = "#for(";

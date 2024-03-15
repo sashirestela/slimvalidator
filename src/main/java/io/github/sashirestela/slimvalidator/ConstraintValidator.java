@@ -18,6 +18,7 @@ public interface ConstraintValidator<A extends Annotation, T> {
     /**
      * Execute the object validation against the constraint.
      * 
+     * @param value Object to be validated.
      * @return The result of the validation.
      */
     boolean isValid(T value);

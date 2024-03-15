@@ -16,6 +16,8 @@ public @interface Constraint {
 
     /**
      * Defines what class is going to execute the validation for a constraint. Mandatory.
+     * 
+     * @return Class that executes validation.
      */
     @SuppressWarnings("rawtypes")
     Class<? extends ConstraintValidator> validatedBy();
