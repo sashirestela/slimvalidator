@@ -2,6 +2,7 @@
 
 Java lightweight validator.
 
+[![Quality gate](https://sonarcloud.io/api/project_badges/quality_gate?project=sashirestela_slimvalidator)](https://sonarcloud.io/summary/new_code?id=sashirestela_slimvalidator)
 [![codecov](https://codecov.io/gh/sashirestela/slimvalidator/graph/badge.svg?token=IGN9Z5LOOI)](https://codecov.io/gh/sashirestela/slimvalidator)
 ![Maven Central](https://img.shields.io/maven-central/v/io.github.sashirestela/slimvalidator)
 ![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/sashirestela/slimvalidator/build_java_maven.yml)
