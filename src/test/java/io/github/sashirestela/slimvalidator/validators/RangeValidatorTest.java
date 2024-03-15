@@ -9,7 +9,7 @@ import java.lang.annotation.Annotation;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class RangeValidatorTest {
+class RangeValidatorTest {
 
     @Test
     void shouldReturnTrueWhenValidatingObjectAgainstAnnnotation() {

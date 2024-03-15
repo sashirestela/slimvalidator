@@ -14,8 +14,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * Main class to execute validation process.
+ */
 public class Validator {
 
+    /**
+     * Check if all the object's fields accomplish their constraints.
+     * 
+     * @param object Whose fields will be validated.
+     * @return List of all the unaccomplished constraints.
+     */
     public <T> List<ConstraintViolation> validate(T object) {
         var context = new ValidationContext();
         this.validateObject(object, context, new Node());

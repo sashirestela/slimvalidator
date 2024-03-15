@@ -7,6 +7,10 @@ import io.github.sashirestela.slimvalidator.exception.ValidationException;
 import java.util.Collection;
 import java.util.Map;
 
+/**
+ * Checks that a text's length or a group's size is within a closed range. Applies to fields of
+ * type: String, Collection, Map or Object array.
+ */
 public class SizeValidator implements ConstraintValidator<Size, Object> {
 
     private int min;
@@ -28,11 +32,11 @@ public class SizeValidator implements ConstraintValidator<Size, Object> {
     }
 
     private int getSize(Object value) {
-        if (String.class.isInstance(value)) {
+        if (value instanceof String) {
             return ((String) value).length();
-        } else if (Collection.class.isInstance(value)) {
+        } else if (value instanceof Collection) {
             return ((Collection<?>) value).size();
-        } else if (Map.class.isInstance(value)) {
+        } else if (value instanceof Map) {
             return ((Map<?, ?>) value).size();
         } else if (value.getClass().isArray()) {
             return ((Object[]) value).length;

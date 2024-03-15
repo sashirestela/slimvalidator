@@ -6,6 +6,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Keeps a record of unaccomplished constraints during the validation of an object.
+ */
 public class ValidationContext {
 
     private List<ConstraintViolation> violations;

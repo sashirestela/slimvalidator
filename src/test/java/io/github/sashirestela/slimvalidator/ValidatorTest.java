@@ -1,5 +1,7 @@
 package io.github.sashirestela.slimvalidator;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import io.github.sashirestela.slimvalidator.data.Address;
 import io.github.sashirestela.slimvalidator.data.Address.Coordinate;
 import io.github.sashirestela.slimvalidator.data.Person;
@@ -8,10 +10,7 @@ import io.github.sashirestela.slimvalidator.data.User.Gender;
 import io.github.sashirestela.slimvalidator.exception.ConstraintViolationException;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-public class ValidatorTest {
+class ValidatorTest {
 
     @Test
     void shouldNotReturnAnyViolationWhenObjectAccomplishAllConstraints() {
@@ -40,7 +39,9 @@ public class ValidatorTest {
                 .build();
         var validator = new Validator();
         var violations = validator.validate(user);
-        assertTrue(violations.size() == 0);
+        var actualNumberOfViolations = violations.size();
+        var expectedNumberOfViolations = 0;
+        assertEquals(expectedNumberOfViolations, actualNumberOfViolations);
     }
 
     @Test

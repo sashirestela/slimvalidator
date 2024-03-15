@@ -5,6 +5,11 @@ import io.github.sashirestela.slimvalidator.constraints.ObjectType;
 
 import java.util.Collection;
 
+/**
+ * Checks if an object's type is of a specific type. Applies to fields of the Object type, including
+ * Collection of objects or Collection of Collection of objects. Collection can be any subinterface
+ * such as: List, Set, etc.
+ */
 public class ObjectTypeValidator implements ConstraintValidator<ObjectType, Object> {
 
     private Class<?> baseClass;
@@ -28,12 +33,12 @@ public class ObjectTypeValidator implements ConstraintValidator<ObjectType, Obje
         if (!firstGroup) {
             return baseClass.isInstance(value);
         } else if (!secondGroup) {
-            return Collection.class.isInstance(value)
+            return (value instanceof Collection)
                     && baseClass.isInstance(((Collection<?>) value).iterator().next())
                     && (maxSize == 0 || ((Collection<?>) value).size() <= maxSize);
         } else {
-            return Collection.class.isInstance(value)
-                    && Collection.class.isInstance(((Collection<?>) value).iterator().next())
+            return (value instanceof Collection)
+                    && (((Collection<?>) value).iterator().next() instanceof Collection)
                     && baseClass
                             .isInstance(((Collection<?>) ((Collection<?>) value).iterator().next()).iterator().next())
                     && (maxSize == 0 || ((Collection<?>) value).size() <= maxSize);

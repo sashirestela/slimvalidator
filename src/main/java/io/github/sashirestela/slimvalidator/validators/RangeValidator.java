@@ -4,6 +4,9 @@ import io.github.sashirestela.slimvalidator.ConstraintValidator;
 import io.github.sashirestela.slimvalidator.constraints.Range;
 import io.github.sashirestela.slimvalidator.exception.ValidationException;
 
+/**
+ * Checks that a value is within a closed range. Applies to fields of any numeric type.
+ */
 public class RangeValidator implements ConstraintValidator<Range, Object> {
 
     private double min;
@@ -25,13 +28,13 @@ public class RangeValidator implements ConstraintValidator<Range, Object> {
     }
 
     private double getNumber(Object value) {
-        if (Integer.class.isInstance(value)) {
-            return Double.valueOf((Integer) value).doubleValue();
-        } else if (Long.class.isInstance(value)) {
-            return Double.valueOf((Long) value).doubleValue();
-        } else if (Float.class.isInstance(value)) {
+        if (value instanceof Integer) {
+            return ((Integer) value).doubleValue();
+        } else if (value instanceof Long) {
+            return ((Long) value).doubleValue();
+        } else if (value instanceof Float) {
             return ((Float) value).doubleValue();
-        } else if (Double.class.isInstance(value)) {
+        } else if (value instanceof Double) {
             return ((Double) value).doubleValue();
         } else {
             throw new ValidationException("Cannot get a number from {0}.", value.getClass().getName(), null);

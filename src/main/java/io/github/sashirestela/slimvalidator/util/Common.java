@@ -23,21 +23,21 @@ public class Common {
 
     public static boolean existsByAnnotMethodType(Object value) {
 
-        if (Boolean.class.isInstance(value)) {
+        if (value instanceof Boolean) {
             return (Boolean) value;
         }
-        if (String.class.isInstance(value)) {
+        if (value instanceof String) {
             return !((String) value).isEmpty();
         }
-        if (Double.class.isInstance(value)) { // it is used by Range annotation.
+        if (value instanceof Double) { // it is used by Range annotation.
             var doubleValue = (Double) value;
             return (doubleValue > Double.MIN_VALUE && doubleValue < Double.MAX_VALUE);
         }
-        if (Integer.class.isInstance(value)) { // it is used by Size annotation.
+        if (value instanceof Integer) { // it is used by Size annotation.
             var integerValue = (Integer) value;
             return (integerValue > 0 && integerValue < Integer.MAX_VALUE);
         }
-        if (Class.class.isInstance(value)) {
+        if (value instanceof Class) {
             return !((Class<?>) value).equals(NullType.class);
         }
         if (value != null && value.getClass().isArray()) {
@@ -47,10 +47,10 @@ public class Common {
     }
 
     public static String toStringByAnnotMethodType(Object value) {
-        if (Class.class.isInstance(value)) {
+        if (value instanceof Class) {
             return ((Class<?>) value).getSimpleName();
         }
-        if (Double.class.isInstance(value)) {
+        if (value instanceof Double) {
             if (((Double) value) % 1 == 0) {
                 return String.valueOf(((Double) value).intValue());
             } else {

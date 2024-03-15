@@ -8,6 +8,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+/**
+ * Detail of every constraint violation.
+ */
 public class ConstraintViolation {
 
     private final Object value;
@@ -28,6 +31,10 @@ public class ConstraintViolation {
         return name;
     }
 
+    /**
+     * Prepare the violation message using the constraint's message field as template and replacing
+     * placeholders with the other constraint's fields.
+     */
     public String getMessage() {
         final String TMPL_LOOP = "#for(";
         final String TMPL_CONDITION = "#if(";

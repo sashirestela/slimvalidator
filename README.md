@@ -9,7 +9,7 @@ Java lightweight validator.
 ## 💡 Description
 SlimValidator is a Java library for providing object validation through annotations. It is inspired by the Java Bean Validation specification but is not a implementation at all.
 
-For example, for validating a class's object, we need to annotate their fields with constraints and then we use the class `Validator` to evaluate all the constraints:
+For example, to validate the object of a class, we need to annotate its fields with constraints and then use the `Validator` class to evaluate all the constraints:
 
 ```java
 /* Classes definition with constraint annotations */
@@ -95,16 +95,16 @@ address.city must not be null.
 reference type must be or String or Collection<String> (max 3 items).
 ```
 
-## 🚩 Field Constraints
+## 🚩 Constraints
 
 ### @Required
 - **Description**: Checks that a value is not null.
-- **Applies to**: Fields of any specific type.
+- **Applies to**: Fields of any type.
 - **Parameters**:
     - _(none)_.
 - **Error messages**:
     - If the value is null:
-        - must not be null.
+        - _must not be null._
 - **Example**:
     ```java
     @Required
@@ -119,11 +119,11 @@ reference type must be or String or Collection<String> (max 3 items).
     - _max_: The greatest value of the range. By default is Double.MAX_VALUE.
 - **Error messages**:
     - If _min_ was set and the value is lower:
-        - must be at least {min}.
+        - _must be at least {min}._
     - If _max_ was set and the value is greater:
-        - must be at most {max}.
+        - _must be at most {max}._
     - If _min_ and _max_ were set and the value is out of range:
-        - must be at least {min} at most {max}.
+        - _must be at least {min} at most {max}._
 - **Example**:
     ```java
     @Range(min = 0.0, max = 100.0)
@@ -138,11 +138,11 @@ reference type must be or String or Collection<String> (max 3 items).
     - _max_: The greatest value of the length or size. By default is Integer.MAX_VALUE.
 - **Error messages**:
     - If _min_ was set and the length or size is lower:
-        - size must be at least {min}.
+        - _size must be at least {min}._
     - If _max_ was set and the length or size is greater:
-        - size must be at most {max}.
+        - _size must be at most {max}._
     - If _min_ and _max_ were set and the length or size is out of range:
-        - size must be at least {min} at most {max}.
+        - _size must be at least {min} at most {max}._
 - **Example**:
     ```java
     @Size(min = 2, max = 5)
@@ -151,7 +151,7 @@ reference type must be or String or Collection<String> (max 3 items).
 
 ### @ObjectType
 - **Description**: Checks that the type of an object is one of a list of candidate types.
-- **Applies to**: Fields of Object type.
+- **Applies to**: Fields of the Object type, including Collection of objects or Collection of Collection of objects. Collection can be any subinterface such as: List, Set, etc.
 - **Parameters**:
     - _baseClass_: A candidate base class for the field. Mandatory.
     - _firstGroup_: A boolean to indicate if the type is a Collection of the base class. By default is false.
@@ -159,18 +159,18 @@ reference type must be or String or Collection<String> (max 3 items).
     - _maxSize_: The greatest size of the first Collection if set. By default is 0.
 - **Error messages for each @ObjectType**:
     - If only _baseClass_ was set and the field type does not match:
-        - {baseClass}
+        - _{baseClass}_
     - If _firstGroup_ was set and the field is not Collection of the baseClass:
-        - Collection<{baseClass}>
+        - _Collection<{baseClass}>_
     - If _firstGroup_ and _maxSize_ were set and the field is not a Collection of the baseClass or collection size is greater than maxSize:
-        - Collection<{baseClass}> (max {maxSize} items)
+        - _Collection<{baseClass}> (max {maxSize} items)_
     - If _firstGroup_ and _secondGroup_ were set and the field is not a Collection of Collection of the baseClass:
-        - Collection<Collection<{baseClass}>>
+        - _Collection<Collection<{baseClass}>>_
     - If _firstGroup_, _secondGroup_ and _maxSize_ were set aand the field is not a Collection of Collection of the baseClass or first collection size is greater than maxSize:
-        - Collection<Collection<{baseClass}>> (max {maxSize} items)
+        - _Collection<Collection<{baseClass}>> (max {maxSize} items)_
 - **Error message for all @ObjectType**:
     - If the field type does not match any ObjectType:
-        - type must be or {msg for ObjectType 1} or {msg for ObjectType 2} ... or {msg for ObjectType N}
+        - _type must be or {msg for ObjectType 1} or {msg for ObjectType 2} ... or {msg for ObjectType N}._
 - **Example**:
     ```java
     @ObjectType(baseClass = String.class)

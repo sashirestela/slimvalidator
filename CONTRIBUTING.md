@@ -7,7 +7,6 @@ Thank you very much for your interest in contributing to the improvement of this
 1. Avoid adding new dependencies as much as possible.
 1. Ensure to add Javadoc where necessary.
 1. Provide unit tests for your code.
-1. Provide demo code to use real services. Use environment variables for credentials.
 1. Large features should be discussed with maintainers before implementation. Use the [Discussion](https://github.com/sashirestela/slimvalidator/discussions) section for this.
 
 ## Code Formatting
@@ -72,8 +71,6 @@ You could set your favorite IDE to be aligned to the custom code format. See det
           "*"
       ]
       ```
-
-4. Set the _import statement order_ as in the image:
 
 </details>
 

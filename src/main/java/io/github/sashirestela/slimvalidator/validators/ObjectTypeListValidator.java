@@ -3,6 +3,9 @@ package io.github.sashirestela.slimvalidator.validators;
 import io.github.sashirestela.slimvalidator.ConstraintValidator;
 import io.github.sashirestela.slimvalidator.constraints.ObjectType;
 
+/**
+ * Checks that the type of an object is one of a list of candidate types.
+ */
 public class ObjectTypeListValidator implements ConstraintValidator<ObjectType.List, Object> {
 
     private ObjectType[] objectTypeList;

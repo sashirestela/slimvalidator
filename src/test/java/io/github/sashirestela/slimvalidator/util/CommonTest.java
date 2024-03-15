@@ -10,7 +10,7 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class CommonTest {
+class CommonTest {
 
     @Test
     void shouldConcatArraysWhenTwoArePassed() {
