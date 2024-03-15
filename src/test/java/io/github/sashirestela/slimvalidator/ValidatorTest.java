@@ -1,7 +1,5 @@
 package io.github.sashirestela.slimvalidator;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import io.github.sashirestela.slimvalidator.data.Address;
 import io.github.sashirestela.slimvalidator.data.Address.Coordinate;
 import io.github.sashirestela.slimvalidator.data.Person;
@@ -9,6 +7,8 @@ import io.github.sashirestela.slimvalidator.data.User;
 import io.github.sashirestela.slimvalidator.data.User.Gender;
 import io.github.sashirestela.slimvalidator.exception.ConstraintViolationException;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ValidatorTest {
 
