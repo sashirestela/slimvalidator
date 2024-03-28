@@ -7,7 +7,7 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class RequiredValidatorTest {
+class RequiredValidatorTest {
 
     @Test
     void shouldReturnExpectedResultWhenEvaluatingDataPassed() {
