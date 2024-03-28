@@ -10,7 +10,7 @@ Java lightweight validator.
 ## 💡 Description
 SlimValidator is a Java library for providing object validation through annotations. It is inspired by the Java Bean Validation specification but is not a implementation at all.
 
-For example, to validate the object of a class, we need to annotate its fields with constraints and then use the `Validator` class to evaluate all the constraints:
+For example, to validate the object of a class, we need to annotate its fields with constraints and then use the `Validator` class to evaluate whether the object meets all the constraints:
 
 ```java
 /* Classes definition with constraint annotations */
@@ -86,30 +86,33 @@ var validator = new Validator();
 var violations = validator.validate(person);
 violations.forEach(v -> System.out.println(v.getName() + " " + v.getMessage()));
 ```
-As a result of the validation process, you will see the following messages in console:
+As a result of the validation process, you will see the following messages in console, because the object does not meet several constraints:
 ```txt
-id must not be null.
+id must have a value.
 income must be at least 2000.
 hobbies size must be at least 3 at most 5.
 address.apartment size must be at most 4.
-address.city must not be null.
+address.city must have a value.
 reference type must be or String or Collection<String> (max 3 items).
 ```
 
 ## 🚩 Constraints
 
 ### @Required
-- **Description**: Checks that a value is not null.
+- **Description**: Checks that a value is not null. In case the value is a group (Collection, Map, Array) checks that it is not empty.
 - **Applies to**: Fields of any type.
 - **Parameters**:
     - _(none)_.
 - **Error messages**:
-    - If the value is null:
-        - _must not be null._
-- **Example**:
+    - If the value is null or an empty group:
+        - _must have a value._
+- **Examples**:
     ```java
     @Required
     private Long id;
+
+    @Required
+    private List<Adress> addresses;
     ```
 
 ### @Range
@@ -133,7 +136,7 @@ reference type must be or String or Collection<String> (max 3 items).
 
 ### @Size
 - **Description**: Checks that a text's length or a group's size is within a closed range.
-- **Applies to**: Fields of type: String, Collection, Map or Object array.
+- **Applies to**: Fields of type: String, Collection, Map, Array.
 - **Parameters**:
     - _min_: The lowest value of the length or size. By default is 0.
     - _max_: The greatest value of the length or size. By default is Integer.MAX_VALUE.
