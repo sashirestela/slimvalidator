@@ -8,6 +8,10 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.Arrays;
 
+/**
+ * Checks that the file extension is one of an expected list. Applies to {@link java.nio.file.Path
+ * Path} and {@link java.io.File File} objects.
+ */
 public class ExtensionValidator implements ConstraintValidator<Extension, Object> {
 
     private String[] extensions;
