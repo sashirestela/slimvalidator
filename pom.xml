@@ -6,7 +6,7 @@
 
   <groupId>io.github.sashirestela</groupId>
   <artifactId>slimvalidator</artifactId>
-  <version>1.1.0</version>
+  <version>1.2.0</version>
   <packaging>jar</packaging>
 
   <name>slimvalidator</name>
@@ -52,16 +52,16 @@
     <maven.compiler.release>11</maven.compiler.release>
     <!-- Dependencies Versions -->
     <slf4j.version>2.0.12</slf4j.version>
-    <lombok.version>1.18.30</lombok.version>
+    <lombok.version>1.18.32</lombok.version>
     <junit.version>5.10.2</junit.version>
     <!-- Plugins Versions -->
-    <compiler.version>3.12.1</compiler.version>
+    <compiler.version>3.13.0</compiler.version>
     <enforcer.version>3.4.1</enforcer.version>
     <surefire.version>3.2.5</surefire.version>
     <exec.version>3.2.0</exec.version>
-    <jacoco.version>0.8.11</jacoco.version>
+    <jacoco.version>0.8.12</jacoco.version>
     <versions.version>2.16.2</versions.version>
-    <source.version>3.3.0</source.version>
+    <source.version>3.3.1</source.version>
     <javadoc.version>3.6.3</javadoc.version>
     <gpg.version>3.1.0</gpg.version>
     <sonatype.version>1.6.13</sonatype.version>

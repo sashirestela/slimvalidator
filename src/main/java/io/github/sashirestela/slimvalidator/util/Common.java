@@ -57,6 +57,9 @@ public class Common {
                 return value.toString();
             }
         }
+        if (value.getClass().isArray() && value.getClass().getComponentType().equals(String.class)) {
+            return Arrays.toString((String[]) value);
+        }
         return value.toString();
     }
 

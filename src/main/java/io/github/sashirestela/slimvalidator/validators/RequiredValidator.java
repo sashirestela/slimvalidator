@@ -16,12 +16,7 @@ public class RequiredValidator implements ConstraintValidator<Required, Object> 
         if (value == null) {
             return false;
         } else {
-            var groupSize = getGroupSize(value);
-            if (groupSize == -1) {
-                return true;
-            } else {
-                return (groupSize > 0);
-            }
+            return getGroupSize(value) != 0;
         }
     }
 
