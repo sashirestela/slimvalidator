@@ -27,7 +27,7 @@ public class ClassMetadata {
         public Object getValue(Object object) {
             var clazz = object.getClass();
             try {
-                var method = clazz.getDeclaredMethod(getMethodName(name), (Class<?>[]) null);
+                var method = clazz.getMethod(getMethodName(name), (Class<?>[]) null);
                 return method.invoke(object);
             } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
                     | InvocationTargetException e) {
