@@ -7,6 +7,23 @@ Java lightweight validator.
 ![Maven Central](https://img.shields.io/maven-central/v/io.github.sashirestela/slimvalidator)
 ![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/sashirestela/slimvalidator/build_java_maven.yml)
 
+### Table of Contents
+- [Description](#-description)
+- [Installation](#-installation)
+- [Constraints](#-constraints)
+  - [@Required](#@required)
+  - [@Range](#@range)
+  - [@Size](#@size)
+  - [@Extension](#@extension)
+  - [@ObjectType](#@objecttype)
+  - [@Valid](#@valid)
+- [Create New Constraint](#-create-new-constraint)
+  - [New Constraint Annotation](#new-constraint-annotation)
+  - [New Validator Class](#new-validator-class)
+- [Contributing](#-contributing)
+- [License](#-license)
+
+
 ## 💡 Description
 SlimValidator is a Java library for providing object validation through annotations. It is inspired by the Java Bean Validation specification but is not a implementation at all.
 
@@ -39,6 +56,9 @@ class Person {
   @ObjectType(baseClass = String.class)
   @ObjectType(baseClass = String.class, firstGroup = true, maxSize = 3)
   Object reference;
+
+  @Extension({"jpg", "png", "bmp"})
+  Path photograph;
 
   // Constructors , getters, setters, etc.
 
@@ -79,12 +99,15 @@ person.setIncome(1850.5);
 person.setHobbies(new String[] {"dancing", "running"});
 person.setAddress(address);
 person.setReference(List.of(10, 20));
+person.setPhotograph(Paths.get("src/test/resources/sample.txt"));
 
 /* Validate objects */
 
 var validator = new Validator();
 var violations = validator.validate(person);
-violations.forEach(v -> System.out.println(v.getName() + " " + v.getMessage()));
+if (violations.size() > 0) {
+  violations.forEach(v -> System.out.println(v.getName() + " " + v.getMessage()));
+}
 ```
 As a result of the validation process, you will see the following messages in console, because the object does not meet several constraints:
 ```txt
@@ -94,7 +117,30 @@ hobbies size must be at least 3 at most 5.
 address.apartment size must be at most 4.
 address.city must have a value.
 reference type must be or String or Collection<String> (max 3 items).
+photograph extension must be one of [jpg, png, bmp].
 ```
+
+## ⚙ Installation
+
+You can install this library by adding the following dependency to your Maven project:
+
+```xml
+<dependency>
+    <groupId>io.github.sashirestela</groupId>
+    <artifactId>slimvalidator</artifactId>
+    <version>[latest version]</version>
+</dependency>
+```
+
+Or alternatively using Gradle:
+
+```groovy
+dependencies {
+    implementation 'io.github.sashirestela:slimvalidator:[latest version]'
+}
+```
+
+NOTE: Requires Java 11 or greater.
 
 ## 🚩 Constraints
 
@@ -153,6 +199,20 @@ reference type must be or String or Collection<String> (max 3 items).
     private List<Project> projects;
     ```
 
+### @Extension
+- **Description**: Checks that the file extension is one of an expected list.
+- **Applies to**: Fields of type: java.nio.file.Path, java.io.File.
+- **Parameters**:
+    - _value_: Array of expected extensions. Mandatory.
+- **Error messages**:
+    - If file extension is not any of the _value_ array:
+        - _extension must be one of {value}._
+- **Example**:
+    ```java
+    @Extension({"doc", "xls", "txt"})
+    private Path evidenceFile;
+    ```
+
 ### @ObjectType
 - **Description**: Checks that the type of an object is one of a list of candidate types.
 - **Applies to**: Fields of the Object type, including Collection of objects or Collection of Collection of objects. Collection can be any subinterface such as: List, Set, etc.
@@ -196,27 +256,70 @@ reference type must be or String or Collection<String> (max 3 items).
     private Address mainAddress;
     ```
 
-## 🛠️ Installation
+## 🪝 Create New Constraint
+For creating a new constraint you need to create both a new constraint annotation and a new validator class:
 
-You can install this library by adding the following dependency to your Maven project:
+### New Constraint Annotation
+Create a new annotation `YourNewConstraint` with the following template:
+```java
+@Documented
+@Constraint(validatedBy = YourNewValidator.class)
+@Target({ ElementType.FIELD })
+@Retention(RetentionPolicy.RUNTIME)
+public @interface YourNewConstraint {
 
-```xml
-<dependency>
-    <groupId>io.github.sashirestela</groupId>
-    <artifactId>slimvalidator</artifactId>
-    <version>[latest version]</version>
-</dependency>
-```
+    String message() default "<your custom message when validation fails>.";
 
-Or alternatively using Gradle:
+    // Add any other annotation methods needed by your new constraint.
 
-```groovy
-dependencies {
-    implementation 'io.github.sashirestela:slimvalidator:[latest version]'
 }
 ```
+- Use the `@Constraint` annotation to link `YourNewConstraint` annotation to `YourNewValidator` class.
+- Define at least the `message()` method. This is the message to show when validation fails. Here you can use optionally:
+  - Curly brackets to reference other annotation methods. For example: `some text with {max} value.`. The message includes the value of the annotation method `max()`.
+  - Conditional segments based on the value of some annotation method. For example: `#if(max)some text with {max} value.#endif`. The message includes the value of the annotation method `max()` and it will be shown only if the `max()` is not empty. In this context, "empty" depends on the the annotation method type:
+    - If boolean, empty means the value is false.
+    - If String, empty means the text is empty.
+    - If double, empty means the number is Double.MIN_VALUE or Double.MAX_VALUE.
+    - If int, empty means the number is zero or Integer.MAX_VALUE.
+    - If Class, empty means the class is equals to javax.lang.model.type.NullType.
+    - If array, empty means the array has no elements.
+  - Loop segments for constraint annotations defined as arrays. For example: `type must be#for(value) or {message}#endfor.`. That message will concatenate the `message()` of each constraint in the constraint array. The argument `value` is not meaningful.
+- Add any other annotation methods needed by your new constraint.
 
-NOTE: Requires Java 11 or greater.
+### New Validator Class
+Create a new class `YourNewValidator` with the following template:
+```java
+public class YourNewValidator implements ConstraintValidator<YourNewConstraint, ClassOfObjectsToValidate> {
+
+    private Type1 annotMethod1;
+    private Type2 annotMethod2;
+    ...
+
+    @Override
+    public void initialize(YourNewConstraint annotation) {
+        annotMethod1 = annotation.annotMethod1();
+        annotMethod2 = annotation.annotMethod2();
+        ...
+    }
+
+    @Override
+    public boolean isValid(Object value) {
+        if (value == null) {
+            return true;
+        }
+
+        // Add your validation logic here
+        
+        return validationResult;
+    }
+
+}
+```
+- Implement the `ConstraintValidator<A, T>` interface, where A represents YourNewConstraint and T represents the class of the objects to validate, in this case, you can use `Object` if your validations applies to more than one class.
+- Create as field members as annotation methods you have in YourNewConstraint, excluding message().
+- Overrides the `initialize()` method to capture the annotation method values in your field members.
+- Overrides the `isValid()` method to do the validation logic. Your first validation step must return true if the object to validate is null, because we have the annotation `@Required` to validate that condition, we don't want to evaluate that nullity here.
 
 ## 💼 Contributing
 Please read our [Contributing](CONTRIBUTING.md) guide to learn and understand how to contribute to this project.
