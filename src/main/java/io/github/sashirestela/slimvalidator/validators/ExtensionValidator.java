@@ -36,6 +36,8 @@ public class ExtensionValidator implements ConstraintValidator<Extension, Object
             fileName = ((File) value).getName();
         } else if (value instanceof Path) {
             fileName = ((Path) value).getFileName().toString();
+        } else if (value instanceof String) {
+            throw new ValidationException("Cannot get a extension from java.lang.String.");
         } else {
             throw new ValidationException("Input must be a File or Path.");
         }
