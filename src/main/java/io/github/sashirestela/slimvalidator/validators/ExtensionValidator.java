@@ -46,7 +46,7 @@ public class ExtensionValidator implements ConstraintValidator<Extension, Object
             throw new ValidationException("File name is null or empty.");
         }
 
-        int lastDotIndex = fileName.lastIndexOf(".");
+        int lastDotIndex = fileName.lastIndexOf('.');
 
         if (lastDotIndex == -1 || lastDotIndex == 0 || lastDotIndex == fileName.length() - 1) {
             throw new ValidationException("No valid file extension found.");
@@ -54,4 +54,5 @@ public class ExtensionValidator implements ConstraintValidator<Extension, Object
 
         return fileName.substring(lastDotIndex + 1);
     }
+
 }
