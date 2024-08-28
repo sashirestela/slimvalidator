@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.lang.annotation.Annotation;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -76,8 +77,8 @@ class ExtensionValidatorTest {
         var validator = new ExtensionValidator();
         var annotation = Sample.extension(new String[] { "mp3", "wav" });
         validator.initialize(annotation);
-        File file = new File(".hiddenfile");
-        var exception = assertThrows(ValidationException.class, () -> validator.isValid(file.toPath()));
+        Path path = new File(".hiddenfile").toPath();
+        var  exception = assertThrows(ValidationException.class, () -> validator.isValid(path));
         var actualMessage = exception.getMessage();
         var expectedMessage = "No valid file extension found.";
         assertEquals(expectedMessage, actualMessage);
@@ -100,8 +101,8 @@ class ExtensionValidatorTest {
         var validator = new ExtensionValidator();
         var annotation = Sample.extension(new String[] { "mp3", "wav" });
         validator.initialize(annotation);
-        File file = new File("");
-        var exception = assertThrows(ValidationException.class, () -> validator.isValid(file.toPath()));
+        Path path = new File("").toPath();
+        var exception = assertThrows(ValidationException.class, () -> validator.isValid(path));
         var actualMessage = exception.getMessage();
         var expectedMessage = "File name is null or empty.";
         assertEquals(expectedMessage, actualMessage);
