@@ -78,7 +78,7 @@ class ExtensionValidatorTest {
         var annotation = Sample.extension(new String[] { "mp3", "wav" });
         validator.initialize(annotation);
         Path path = new File(".hiddenfile").toPath();
-        var  exception = assertThrows(ValidationException.class, () -> validator.isValid(path));
+        var exception = assertThrows(ValidationException.class, () -> validator.isValid(path));
         var actualMessage = exception.getMessage();
         var expectedMessage = "No valid file extension found.";
         assertEquals(expectedMessage, actualMessage);
