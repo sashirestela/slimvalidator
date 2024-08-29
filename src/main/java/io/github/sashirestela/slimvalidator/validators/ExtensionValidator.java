@@ -29,14 +29,30 @@ public class ExtensionValidator implements ConstraintValidator<Extension, Object
         return Arrays.stream(extensions).anyMatch(ext -> ext.equals(getExtension(value)));
     }
 
-    private String getExtension(Object value) {
-        if (value instanceof Path) {
-            return ((Path) value).toString().split("\\.")[1];
-        } else if (value instanceof File) {
-            return ((File) value).getName().split("\\.")[1];
+    private String getExtension(Object value) throws IllegalArgumentException {
+        String fileName;
+
+        if (value instanceof File) {
+            fileName = ((File) value).getName();
+        } else if (value instanceof Path) {
+            fileName = ((Path) value).getFileName().toString();
+        } else if (value instanceof String) {
+            throw new ValidationException("Cannot get a extension from java.lang.String.");
         } else {
-            throw new ValidationException("Cannot get a extension from {0}.", value.getClass().getName(), null);
+            throw new ValidationException("Input must be a File or Path.");
         }
+
+        if (fileName == null || fileName.isEmpty()) {
+            throw new ValidationException("File name is null or empty.");
+        }
+
+        int lastDotIndex = fileName.lastIndexOf('.');
+
+        if (lastDotIndex == -1 || lastDotIndex == 0 || lastDotIndex == fileName.length() - 1) {
+            throw new ValidationException("No valid file extension found.");
+        }
+
+        return fileName.substring(lastDotIndex + 1);
     }
 
 }
