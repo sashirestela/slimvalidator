@@ -6,7 +6,7 @@
 
   <groupId>io.github.sashirestela</groupId>
   <artifactId>slimvalidator</artifactId>
-  <version>1.2.2</version>
+  <version>1.2.3</version>
   <packaging>jar</packaging>
 
   <name>slimvalidator</name>
@@ -47,25 +47,29 @@
   </distributionManagement>
 
   <properties>
-    <!-- General -->
+    <!-- Build Properties -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.version>3.6.3</maven.version>
     <maven.compiler.release>11</maven.compiler.release>
+
     <!-- Dependencies Versions -->
+    <lombok.version>1.18.36</lombok.version>
     <slf4j.version>2.0.16</slf4j.version>
-    <lombok.version>1.18.34</lombok.version>
-    <junit.version>5.11.0</junit.version>
+    <junit.version>[5.11.0,6.0.0)</junit.version>
+
     <!-- Plugins Versions -->
     <compiler.version>3.13.0</compiler.version>
     <enforcer.version>3.5.0</enforcer.version>
-    <surefire.version>3.5.0</surefire.version>
-    <exec.version>3.4.1</exec.version>
+    <surefire.version>3.5.2</surefire.version>
+    <exec.version>3.5.0</exec.version>
     <jacoco.version>0.8.12</jacoco.version>
-    <versions.version>2.17.1</versions.version>
+    <versions.version>2.18.0</versions.version>
     <source.version>3.3.1</source.version>
-    <javadoc.version>3.10.0</javadoc.version>
-    <gpg.version>3.2.5</gpg.version>
+    <javadoc.version>3.11.2</javadoc.version>
+    <gpg.version>3.2.7</gpg.version>
     <sonatype.version>1.7.0</sonatype.version>
     <spotless.version>2.43.0</spotless.version>
+    <dependency.version>3.8.1</dependency.version>
   </properties>
 
   <profiles>
@@ -139,7 +143,7 @@
               <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
               <autoReleaseAfterClose>true</autoReleaseAfterClose>
             </configuration>
-          </plugin>          
+          </plugin>
         </plugins>
       </build>
     </profile>
@@ -148,21 +152,15 @@
   <dependencyManagement>
     <dependencies>
       <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>slf4j-api</artifactId>
-        <version>${slf4j.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>slf4j-simple</artifactId>
-        <version>${slf4j.version}</version>
-        <optional>true</optional>
-      </dependency>
-      <dependency>
         <groupId>org.projectlombok</groupId>
         <artifactId>lombok</artifactId>
         <version>${lombok.version}</version>
         <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+        <version>${slf4j.version}</version>
       </dependency>
       <dependency>
         <groupId>org.junit.jupiter</groupId>
@@ -179,16 +177,12 @@
       <artifactId>lombok</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-simple</artifactId>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
     </dependency>
   </dependencies>
 
@@ -198,6 +192,19 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>${compiler.version}</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>${dependency.version}</version>
+        <executions>
+          <execution>
+            <id>analyze</id>
+            <goals>
+              <goal>analyze-only</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -212,9 +219,9 @@
             <configuration>
               <rules>
                 <requireMavenVersion>
-                  <version>3.6.3</version>
+                  <version>${maven.version}</version>
                 </requireMavenVersion>
-              </rules>    
+              </rules>
             </configuration>
           </execution>
         </executions>
