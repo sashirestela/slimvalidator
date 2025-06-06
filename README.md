@@ -6,6 +6,7 @@ Java lightweight validator.
 [![codecov](https://codecov.io/gh/sashirestela/slimvalidator/graph/badge.svg?token=IGN9Z5LOOI)](https://codecov.io/gh/sashirestela/slimvalidator)
 ![Maven Central](https://img.shields.io/maven-central/v/io.github.sashirestela/slimvalidator)
 ![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/sashirestela/slimvalidator/build_java_maven.yml)
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/sashirestela/slimvalidator)
 
 ### Table of Contents
 - [Description](#-description)
