@@ -19,10 +19,14 @@ jobs:
           java-package: "jdk"
           check-latest: true
           server-id: "central"
-          server-username: ${{ secrets.SERVER_USERNAME }}
-          server-password: ${{ secrets.SERVER_PASSWORD }}
+          server-username: SERVER_USERNAME
+          server-password: SERVER_PASSWORD
           gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
-          gpg-passphrase: ${{ secrets.GPG_PASSPHRASE }}
+          gpg-passphrase: GPG_PASSPHRASE
           cache: "maven"
       - name: Build & Deploy
         run: mvn -U -B clean deploy -P release
+        env:
+          SERVER_USERNAME: ${{ secrets.SERVER_PASSWORD }}
+          SERVER_PASSWORD: ${{ secrets.SERVER_PASSWORD }}
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
