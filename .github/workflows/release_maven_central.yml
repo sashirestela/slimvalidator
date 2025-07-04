@@ -27,6 +27,6 @@ jobs:
       - name: Build & Deploy
         run: mvn -U -B clean deploy -P release
         env:
-          SERVER_USERNAME: ${{ secrets.SERVER_PASSWORD }}
+          SERVER_USERNAME: ${{ secrets.SERVER_USERNAME }}
           SERVER_PASSWORD: ${{ secrets.SERVER_PASSWORD }}
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
