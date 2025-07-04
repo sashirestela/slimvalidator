@@ -7,7 +7,7 @@ import java.util.Collection;
 import java.util.Map;
 
 /**
- * Checks that a value is not null. Applies to fields of any type.
+ * Checks that a value is not null or not empty in case of groups. Applies to fields of any type.
  */
 public class RequiredValidator implements ConstraintValidator<Required, Object> {
 
