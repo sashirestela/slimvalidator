@@ -53,8 +53,10 @@ public class MetadataStore {
                 fields.add(fieldMetadata);
             }
         }
+        List<AnnotationMetadata> annotations = getContraintAnnotations(clazz.getDeclaredAnnotations());
         var classMetadata = ClassMetadata.builder()
                 .fullName(clazz.getName())
+                .annotations(annotations)
                 .fields(fields)
                 .build();
         classesByFullName.put(clazz.getName(), classMetadata);

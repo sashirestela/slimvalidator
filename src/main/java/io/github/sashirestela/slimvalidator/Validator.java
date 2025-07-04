@@ -1,11 +1,13 @@
 package io.github.sashirestela.slimvalidator;
 
 import io.github.sashirestela.slimvalidator.exception.ValidationException;
+import io.github.sashirestela.slimvalidator.metadata.ClassMetadata;
 import io.github.sashirestela.slimvalidator.metadata.ClassMetadata.AnnotationMetadata;
 import io.github.sashirestela.slimvalidator.metadata.ClassMetadata.FieldMetadata;
 import io.github.sashirestela.slimvalidator.metadata.MetadataStore;
 import io.github.sashirestela.slimvalidator.util.Common;
 import io.github.sashirestela.slimvalidator.util.Node;
+import io.github.sashirestela.slimvalidator.util.Reflect;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
@@ -39,14 +41,32 @@ public class Validator {
         context.visit(object);
         var clazz = object.getClass();
         var classMetadata = MetadataStore.one().get(clazz);
+
+        this.validateClassLevel(classMetadata, object, context, node);
+
         for (var fieldMetadata : classMetadata.getFields()) {
-            this.validateField(fieldMetadata, object, context, node);
+            this.validateFieldLevel(fieldMetadata, object, context, node);
         }
     }
 
-    private void validateField(FieldMetadata fieldMetadata, Object object, ValidationContext context, Node node) {
-        var fieldValue = fieldMetadata.getValue(object);
+    private void validateClassLevel(ClassMetadata classMetadata, Object object, ValidationContext context, Node node) {
+        for (var annotationMetadata : classMetadata.getAnnotations()) {
+            var annotation = annotationMetadata.getAnnotation();
+            var violationOptional = this.validateAnnotation(annotationMetadata, annotation, object, pathName(node));
+            if (violationOptional.isPresent()) {
+                context.addViolation(violationOptional.get());
+            }
+        }
+    }
+
+    private String pathName(Node node) {
+        var nodeStr = node.toString();
+        return nodeStr.isBlank() ? "" : "in ".concat(nodeStr);
+    }
+
+    private void validateFieldLevel(FieldMetadata fieldMetadata, Object object, ValidationContext context, Node node) {
         var fieldName = fieldMetadata.getName();
+        var fieldValue = Reflect.getValue(object, fieldName);
         for (var annotationMetadata : fieldMetadata.getAnnotations()) {
             var annotation = annotationMetadata.getAnnotation();
             var violationOptional = this.validateAnnotation(annotationMetadata, annotation, fieldValue,
@@ -79,7 +99,7 @@ public class Validator {
 
     @SuppressWarnings("unchecked")
     private <A extends Annotation, T> Optional<ConstraintViolation> validateAnnotation(
-            AnnotationMetadata annotationMetadata, A annotation, T fieldValue, String pathName) {
+            AnnotationMetadata annotationMetadata, A annotation, T value, String pathName) {
         var constraintValidatorClass = annotationMetadata.getValidatedBy();
         if (constraintValidatorClass == null) {
             return Optional.empty();
@@ -89,10 +109,10 @@ public class Validator {
                     .getConstructor()
                     .newInstance();
             constraintValidator.initialize(annotation);
-            if (constraintValidator.isValid(fieldValue)) {
+            if (constraintValidator.isValid(value)) {
                 return Optional.empty();
             } else {
-                return Optional.of(new ConstraintViolation(fieldValue, pathName, annotationMetadata));
+                return Optional.of(new ConstraintViolation(value, pathName, annotationMetadata));
             }
         } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
                 | NoSuchMethodException | SecurityException e) {
