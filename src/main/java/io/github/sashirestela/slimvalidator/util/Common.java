@@ -22,7 +22,6 @@ public class Common {
     }
 
     public static boolean existsByAnnotMethodType(Object value) {
-
         if (value instanceof Boolean) {
             return (Boolean) value;
         }
@@ -38,7 +37,7 @@ public class Common {
             return (integerValue > 0 && integerValue < Integer.MAX_VALUE);
         }
         if (value instanceof Class) {
-            return !((Class<?>) value).equals(NullType.class);
+            return !(value).equals(NullType.class);
         }
         if (value != null && value.getClass().isArray()) {
             return ((Object[]) value).length > 0;
