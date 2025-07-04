@@ -11,13 +11,16 @@ Java lightweight validator.
 ### Table of Contents
 - [Description](#-description)
 - [Installation](#-installation)
-- [Constraints](#-constraints)
+- [Field-Level Constraints](#-field-level-constraints)
   - [@Required](#required)
   - [@Range](#range)
   - [@Size](#size)
   - [@Extension](#extension)
   - [@ObjectType](#objecttype)
   - [@Valid](#valid)
+- [Class-Level Constraints](#-class-level-constraints)
+  - [@RequiredIfNull](#requiredifnull)
+  - [@FieldMatch](#fieldmatch)
 - [Create New Constraint](#-create-new-constraint)
   - [New Constraint Annotation](#new-constraint-annotation)
   - [New Validator Class](#new-validator-class)
@@ -28,7 +31,7 @@ Java lightweight validator.
 ## 💡 Description
 SlimValidator is a Java library for providing object validation through annotations. It is inspired by the Java Bean Validation specification but is not a implementation at all.
 
-For example, to validate the object of a class, we need to annotate its fields with constraints and then use the `Validator` class to evaluate whether the object meets all the constraints:
+For example, to validate the object of a class, we need to annotate its class or fields with constraints and then use the `Validator` class to evaluate whether the object meets all the constraints:
 
 ```java
 /* Classes definition with constraint annotations */
@@ -61,6 +64,9 @@ class Person {
   @Extension({"jpg", "png", "bmp"})
   Path photograph;
 
+  @Valid
+  User user;
+
   // Constructors , getters, setters, etc.
 
 }
@@ -81,6 +87,24 @@ class Address {
 
 }
 
+@RequiredIfNull(fields = {"userName"}, dependsOn = "email")
+@FieldMatch(first = "password", second = "confirmPassword")
+class User {
+  
+  String username;
+
+  String email;
+
+  @Required
+  String password;
+
+  @Required
+  String confirmPassword;
+
+  // Constructors , getters, setters, etc.
+
+}
+
 enum Gender {
   MALE,
   FEMALE,
@@ -92,6 +116,10 @@ enum Gender {
 var address = new Address();
 address.setStreetNumberName("1765 Paramount Avenue");
 address.setApartment("123-A");
+
+var user = new User();
+user.setPassword("q1w2e3");
+user.setConfirmPassword("q1w2e3");
 
 var person = new Person();
 person.setFullName("Martin Jefferson");
@@ -119,6 +147,7 @@ address.apartment size must be at most 4.
 address.city must have a value.
 reference type must be or String or Collection<String> (max 3 items).
 photograph extension must be one of [jpg, png, bmp].
+in user [username] must have a value when email is null.
 ```
 
 ## ⚙ Installation
@@ -143,7 +172,7 @@ dependencies {
 
 NOTE: Requires Java 11 or greater.
 
-## 🚩 Constraints
+## 🎯 Field-Level Constraints
 
 ### @Required
 - **Description**: Checks that a value is not null. In case the value is a group (Collection, Map, Array) checks that it is not empty.
@@ -246,7 +275,7 @@ NOTE: Requires Java 11 or greater.
 
 ### @Valid
 - **Description**: Flag to do nested validation for fields without any constraint.
-- **Applies to**: Fields of custom classes that do not have any constraint but it requires to validate their nested fields. Any constraint (Required, Range, Size, ObjectType) enable nested validation automatically.
+- **Applies to**: Fields of custom classes that do not have any constraint but it requires to validate their nested fields. Any filed-level constraint enable nested validation automatically.
 - **Parameters**:
     - _(none)_.
 - **Error messages**:
@@ -257,6 +286,45 @@ NOTE: Requires Java 11 or greater.
     private Address mainAddress;
     ```
 
+## 📦 Class-Level Constraints
+
+### @RequiredIfNull
+- **Description**: Checks that all fields in a list are not null when the dependsOn field is null.
+- **Applies to**: Fields of any type.
+- **Parameters**:
+    - _fields_: Array of field names to evaluate. Mandatory.
+    - _dependsOn_: Name of the reference field. Mandatory.
+- **Error messages**:
+    - If any of the _fields_ is null when the _dependsOn_ field is null:
+        - _{fields} must have a value when {dependsOn} is null._
+- **Examples**:
+    ```java
+    @RequiredIfNull(fields = {"firstName", "lastName"}, dependsOn = "fullName")
+    class User {
+        private String firstName;
+        private String lastName;
+        private String fullName;
+    }
+    ```
+
+### @FieldMatch
+- **Description**: Checks that two fields match.
+- **Applies to**: Fields of any type.
+- **Parameters**:
+    - _first_: First field name. Mandatory.
+    - _second_: Second field name. Mandatory.
+- **Error messages**:
+    - If both fields do not match:
+        - _{first} and {second} must match._
+- **Examples**:
+    ```java
+    @FieldMatch(first = "password", second = "confirmPassword")
+    class User {
+        private String password;
+        private String confirmPassword;
+    }
+    ```
+
 ## 🪝 Create New Constraint
 For creating a new constraint you need to create both a new constraint annotation and a new validator class:
 
@@ -265,7 +333,8 @@ Create a new annotation `YourNewConstraint` with the following template:
 ```java
 @Documented
 @Constraint(validatedBy = YourNewValidator.class)
-@Target({ ElementType.FIELD })
+@Target({ ElementType.FIELD })  // For filed-level constraint OR
+@Target({ ElementType.TYPE })   // For class-level constraint
 @Retention(RetentionPolicy.RUNTIME)
 public @interface YourNewConstraint {
 
@@ -277,8 +346,8 @@ public @interface YourNewConstraint {
 ```
 - Use the `@Constraint` annotation to link `YourNewConstraint` annotation to `YourNewValidator` class.
 - Define at least the `message()` method. This is the message to show when validation fails. Here you can use optionally:
-  - Curly brackets to reference other annotation methods. For example: `some text with {max} value.`. The message includes the value of the annotation method `max()`.
-  - Conditional segments based on the value of some annotation method. For example: `#if(max)some text with {max} value.#endif`. The message includes the value of the annotation method `max()` and it will be shown only if the `max()` is not empty. In this context, "empty" depends on the the annotation method type:
+  - Curly brackets to reference other annotation methods. For example: `some text with {max} value.`. The message includes the value of a sample annotation method `max()`.
+  - Conditional segments based on the value of some annotation method. For example: `#if(max)some text with {max} value.#endif`. The message includes the value of an annotation method `max()` and it will be shown only if the `max()` is not empty. In this context, "empty" depends on the the annotation method type:
     - If boolean, empty means the value is false.
     - If String, empty means the text is empty.
     - If double, empty means the number is Double.MIN_VALUE or Double.MAX_VALUE.
@@ -306,6 +375,7 @@ public class YourNewValidator implements ConstraintValidator<YourNewConstraint, 
 
     @Override
     public boolean isValid(Object value) {
+        // This condition applies for field-level constraints only
         if (value == null) {
             return true;
         }
@@ -320,7 +390,7 @@ public class YourNewValidator implements ConstraintValidator<YourNewConstraint, 
 - Implement the `ConstraintValidator<A, T>` interface, where A represents YourNewConstraint and T represents the class of the objects to validate, in this case, you can use `Object` if your validations applies to more than one class.
 - Create as field members as annotation methods you have in YourNewConstraint, excluding message().
 - Overrides the `initialize()` method to capture the annotation method values in your field members.
-- Overrides the `isValid()` method to do the validation logic. Your first validation step must return true if the object to validate is null, because we have the annotation `@Required` to validate that condition, we don't want to evaluate that nullity here.
+- Overrides the `isValid()` method to do the validation logic. For field-level constraints only: your first validation step must return true if the object to validate is null, because we have the annotation `@Required` to validate that condition, we don't want to evaluate that nullity here.
 
 ## 💼 Contributing
 Please read our [Contributing](CONTRIBUTING.md) guide to learn and understand how to contribute to this project.

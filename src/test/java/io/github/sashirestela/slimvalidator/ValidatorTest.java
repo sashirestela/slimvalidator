@@ -3,6 +3,7 @@ package io.github.sashirestela.slimvalidator;
 import io.github.sashirestela.slimvalidator.data.AbstractClass.ChildClass;
 import io.github.sashirestela.slimvalidator.data.Address;
 import io.github.sashirestela.slimvalidator.data.Address.Coordinate;
+import io.github.sashirestela.slimvalidator.data.Participant;
 import io.github.sashirestela.slimvalidator.data.Person;
 import io.github.sashirestela.slimvalidator.data.User;
 import io.github.sashirestela.slimvalidator.data.User.Gender;
@@ -78,7 +79,6 @@ class ValidatorTest {
 
     @Test
     void shouldExecuteValidationWhenThereIsClassHierarchy() {
-
         var childObject = ChildClass.builder()
                 .name("name")
                 .level(12)
@@ -89,6 +89,31 @@ class ValidatorTest {
         var exception = new ConstraintViolationException(violations);
         var actualViolationsMessage = exception.getMessage();
         var expectedViolationMessage = "level must be at least 1 at most 10.";
+        assertEquals(expectedViolationMessage, actualViolationsMessage);
+    }
+
+    @Test
+    void shouldExecuteValidationWhenThereAreDependentFields() {
+        var participant = Participant.builder()
+                .firstName("George")
+                .password("qwerty")
+                .partner(Participant.builder()
+                        .fullName("Robert Taylor")
+                        .partner(Participant.builder()
+                                .lastName("Smith")
+                                .confirmPassword("qwerty")
+                                .build())
+                        .build())
+                .build();
+        var validator = new Validator();
+        var violations = validator.validate(participant);
+        var exception = new ConstraintViolationException(violations);
+        var actualViolationsMessage = exception.getMessage();
+        var expectedViolationMessage = "" +
+                "[firstName, lastName] must have a value when fullName is null.\n" +
+                "password and confirmPassword must match.\n" +
+                "in partner.partner [firstName, lastName] must have a value when fullName is null.\n" +
+                "in partner.partner password and confirmPassword must match.";
         assertEquals(expectedViolationMessage, actualViolationsMessage);
     }
 
