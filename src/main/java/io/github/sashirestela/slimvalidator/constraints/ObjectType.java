@@ -1,9 +1,9 @@
 package io.github.sashirestela.slimvalidator.constraints;
 
 import io.github.sashirestela.slimvalidator.Constraint;
-import io.github.sashirestela.slimvalidator.constraints.ObjectType.List;
-import io.github.sashirestela.slimvalidator.validators.ObjectTypeListValidator;
+import io.github.sashirestela.slimvalidator.constraints.ObjectType.ObjectTypes;
 import io.github.sashirestela.slimvalidator.validators.ObjectTypeValidator;
+import io.github.sashirestela.slimvalidator.validators.ObjectTypesValidator;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -16,32 +16,42 @@ import java.lang.annotation.Target;
 @Constraint(validatedBy = ObjectTypeValidator.class)
 @Target({ ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
-@Repeatable(List.class)
+@Repeatable(ObjectTypes.class)
 public @interface ObjectType {
 
-    String message() default ""
-            + "#if(firstGroup)Collection\\<#endif"
-            + "#if(secondGroup)Collection\\<#endif"
-            + "{baseClass}"
-            + "#if(secondGroup)>#endif"
-            + "#if(firstGroup)>#endif"
-            + "#if(maxSize) (max {maxSize} items)#endif";
+    enum Schema {
+        DIRECT,      // baseClass
+        COLL,        // Collection<baseClass>
+        COLL_COLL,   // Collection<Collection<baseClass>>
+        MAP,         // Map<keyClass, baseClass>
+        MAP_COLL     // Map<keyClass, Collection<baseClass>>
+    }
 
-    Class<?> baseClass();
+    String message() default "";
 
-    boolean firstGroup() default false;
+    Schema schema() default Schema.DIRECT;
 
-    boolean secondGroup() default false;
+    Class<?>[] baseClass();
 
-    int maxSize() default 0;
+    Class<?> keyClass() default void.class;
+
+    int maxSize() default Integer.MAX_VALUE;
+
+    int maxInnerSize() default Integer.MAX_VALUE;
+
+    int maxChecks() default 20;
+
+    boolean allowNull() default true;
+
+    boolean allowInnerNull() default true;
 
     @Documented
-    @Constraint(validatedBy = ObjectTypeListValidator.class)
+    @Constraint(validatedBy = ObjectTypesValidator.class)
     @Target({ ElementType.FIELD })
     @Retention(RetentionPolicy.RUNTIME)
-    @interface List {
+    @interface ObjectTypes {
 
-        String message() default "type must be#for(value) or {message}#endfor.";
+        String message() default "";
 
         ObjectType[] value();
 

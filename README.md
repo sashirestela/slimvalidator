@@ -244,33 +244,40 @@ NOTE: Requires Java 11 or greater.
     ```
 
 ### @ObjectType
-- **Description**: Checks that the type of an object is one of a list of candidate types.
-- **Applies to**: Fields of the Object type, including Collection of objects or Collection of Collection of objects. Collection can be any subinterface such as: List, Set, etc.
+- **Description**: Checks that the type of an object matches a specific schema pattern. Supports direct objects, collections, nested collections, maps, and maps with collection values.
+- **Applies to**: Fields of the Object type, including various collection and map structures.
 - **Parameters**:
-    - _baseClass_: A candidate base class for the field. Mandatory.
-    - _firstGroup_: A boolean to indicate if the type is a Collection of the base class. By default is false.
-    - _secondGroup_: A boolean to indicate if the type is a Collection of Collection of the base class. By default is false.
-    - _maxSize_: The greatest size of the first Collection if set. By default is 0.
-- **Error messages for each @ObjectType**:
-    - If only _baseClass_ was set and the field type does not match:
-        - _{baseClass}_
-    - If _firstGroup_ was set and the field is not Collection of the baseClass:
-        - _Collection<{baseClass}>_
-    - If _firstGroup_ and _maxSize_ were set and the field is not a Collection of the baseClass or collection size is greater than maxSize:
-        - _Collection<{baseClass}> (max {maxSize} items)_
-    - If _firstGroup_ and _secondGroup_ were set and the field is not a Collection of Collection of the baseClass:
-        - _Collection<Collection<{baseClass}>>_
-    - If _firstGroup_, _secondGroup_ and _maxSize_ were set aand the field is not a Collection of Collection of the baseClass or first collection size is greater than maxSize:
-        - _Collection<Collection<{baseClass}>> (max {maxSize} items)_
-- **Error message for all @ObjectType**:
-    - If the field type does not match any ObjectType:
-        - _type must be or {msg for ObjectType 1} or {msg for ObjectType 2} ... or {msg for ObjectType N}._
+    - _schema_: The schema pattern to validate against. Options: DIRECT, COLL, COLL_COLL, MAP, MAP_COLL. By default is DIRECT.
+    - _baseClass_: Array of candidate base classes for the field. Mandatory.
+    - _keyClass_: The class type for map keys when using MAP or MAP_COLL schema. By default is void.class.
+    - _maxSize_: The maximum size of the outer collection or map. By default is Integer.MAX_VALUE.
+    - _maxInnerSize_: The maximum size of inner collections. By default is Integer.MAX_VALUE.
+    - _maxChecks_: The maximum number of items to check for performance optimization. By default is 20.
+    - _allowNull_: Whether to allow null values in collections or maps. By default is true.
+    - _allowInnerNull_: Whether to allow null values in inner collections. By default is true.
+- **Schema Types**:
+    - _DIRECT_: Validates direct object types (baseClass)
+    - _COLL_: Validates Collection\<baseClass>
+    - _COLL_COLL_: Validates Collection<Collection\<baseClass>>
+    - _MAP_: Validates Map<keyClass, baseClass>
+    - _MAP_COLL_: Validates Map<keyClass, Collection\<baseClass>>
+- **Error messages**:
+    - Dynamically generated based on schema type and configuration parameters
 - **Example**:
     ```java
-    @ObjectType(baseClass = String.class)
-    @ObjectType(baseClass = String.class, firstGroup = true, maxSize = 2)
-    @ObjectType(baseClass = String.class, firstGroup = true, secondGroup = true, maxSize = 2)
-    Object reference;
+    // directReference could be: String or Integer
+    @ObjectType(baseClass = {String.class, Integer.class})
+    private Object directReference;
+
+    // mapReference could be: Map<String, Double> or Map<String, Integer>
+    @ObjectType(schema = Schema.MAP, keyClass = String.class, baseClass = {Double.class, Integer.class})
+    private Object mapReference;
+
+    // multiSchemaReference could be: String or List<String> or List<List<String>>
+    @ObjectType(baseClass = {String.class})
+    @ObjectType(schema = Schema.COLL, baseClass = {String.class}, maxSize = 2)
+    @ObjectType(schema = Schema.COLL_COLL, baseClass = {String.class}, maxSize = 2)
+    private Object multiSchemaReference;
     ```
 
 ### @Valid
@@ -374,6 +381,15 @@ public class YourNewValidator implements ConstraintValidator<YourNewConstraint, 
     }
 
     @Override
+    public String getMessage() {
+        // Implement this method when complex logic is needed to build the message
+        // This is optional - if not implemented, the message from the annotation will be used
+        // Example:
+        // return "Custom message with " + annotMethod1 + " and " + annotMethod2;
+        return null; // Return null to use the annotation's message
+    }
+
+    @Override
     public boolean isValid(Object value) {
         // This condition applies for field-level constraints only
         if (value == null) {
@@ -389,8 +405,9 @@ public class YourNewValidator implements ConstraintValidator<YourNewConstraint, 
 ```
 - Implement the `ConstraintValidator<A, T>` interface, where A represents YourNewConstraint and T represents the class of the objects to validate, in this case, you can use `Object` if your validations applies to more than one class.
 - Create as field members as annotation methods you have in YourNewConstraint, excluding message().
-- Overrides the `initialize()` method to capture the annotation method values in your field members.
-- Overrides the `isValid()` method to do the validation logic. For field-level constraints only: your first validation step must return true if the object to validate is null, because we have the annotation `@Required` to validate that condition, we don't want to evaluate that nullity here.
+- Override the `initialize()` method to capture the annotation method values in your field members.
+- Override the `getMessage()` method (optional) when you need complex logic to build the error message. If not implemented or returns null, the framework will use the message from the annotation with template processing.
+- Override the `isValid()` method to do the validation logic. For field-level constraints only: your first validation step must return true if the object to validate is null, because we have the annotation `@Required` to validate that condition, we don't want to evaluate that nullity here.
 
 ## 💼 Contributing
 Please read our [Contributing](CONTRIBUTING.md) guide to learn and understand how to contribute to this project.

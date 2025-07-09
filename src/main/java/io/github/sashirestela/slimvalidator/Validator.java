@@ -112,7 +112,8 @@ public class Validator {
             if (constraintValidator.isValid(value)) {
                 return Optional.empty();
             } else {
-                return Optional.of(new ConstraintViolation(value, pathName, annotationMetadata));
+                var message = constraintValidator.getMessage();
+                return Optional.of(new ConstraintViolation(value, pathName, annotationMetadata, message));
             }
         } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
                 | NoSuchMethodException | SecurityException e) {

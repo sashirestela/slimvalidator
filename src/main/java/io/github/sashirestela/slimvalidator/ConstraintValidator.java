@@ -16,6 +16,15 @@ public interface ConstraintValidator<A extends Annotation, T> {
     }
 
     /**
+     * Prepare and get the message from this validator. Implement it when major logic is needed.
+     * 
+     * @return The prepared message.
+     */
+    default String getMessage() {
+        return null;
+    }
+
+    /**
      * Execute the object validation against the constraint.
      * 
      * @param value Object to be validated.

@@ -70,7 +70,7 @@ class ValidatorTest {
                 + "gender must have a value.\n"
                 + "addresses.0.city must have a value.\n"
                 + "addresses.0.coordinate.latitude must have a value.\n"
-                + "reference type must be or String or Collection<String> (max 2 items) or Collection<Collection<String>> (max 2 items).\n"
+                + "reference type must be one of String or Collection<String> and size at most 2 or Map<String, String> and size at most 2.\n"
                 + "hobbies size must be at least 3.\n"
                 + "relatives size must be at least 2.\n"
                 + "relatives.wife.age must be at least 1 at most 100.";
