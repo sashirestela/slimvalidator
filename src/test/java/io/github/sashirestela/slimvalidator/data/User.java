@@ -1,6 +1,7 @@
 package io.github.sashirestela.slimvalidator.data;
 
 import io.github.sashirestela.slimvalidator.constraints.ObjectType;
+import io.github.sashirestela.slimvalidator.constraints.ObjectType.Schema;
 import io.github.sashirestela.slimvalidator.constraints.Required;
 import io.github.sashirestela.slimvalidator.constraints.Size;
 import lombok.Builder;
@@ -35,8 +36,8 @@ public class User {
     List<Address> addresses;
 
     @ObjectType(baseClass = String.class)
-    @ObjectType(baseClass = String.class, firstGroup = true, maxSize = 2)
-    @ObjectType(baseClass = String.class, firstGroup = true, secondGroup = true, maxSize = 2)
+    @ObjectType(schema = Schema.COLL, baseClass = String.class, maxSize = 2)
+    @ObjectType(schema = Schema.MAP, keyClass = String.class, baseClass = String.class, maxSize = 2)
     Object reference;
 
     @Size(min = 3)

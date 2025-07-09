@@ -16,11 +16,13 @@ public class ConstraintViolation {
     private final Object value;
     private final String name;
     private final AnnotationMetadata annotationMetadata;
+    private final String message;
 
-    public ConstraintViolation(Object value, String name, AnnotationMetadata annotationMetadata) {
+    public ConstraintViolation(Object value, String name, AnnotationMetadata annotationMetadata, String message) {
         this.value = value;
         this.name = name;
         this.annotationMetadata = annotationMetadata;
+        this.message = message;
     }
 
     public Object getValue() {
@@ -38,16 +40,19 @@ public class ConstraintViolation {
      * @return The concrete violation message.
      */
     public String getMessage() {
+        if (this.message != null && !message.isBlank()) {
+            return this.message;
+        }
         final String TMPL_LOOP = "#for(";
         final String TMPL_CONDITION = "#if(";
         var values = annotationMetadata.getValuesByAnnotMethod();
-        var message = values.get("message").toString();
-        if (message.contains(TMPL_LOOP)) {
-            return replaceLoop(message, getSubMessages(annotationMetadata));
-        } else if (message.contains(TMPL_CONDITION)) {
-            return replaceCondition(message, values);
+        var statedMessage = values.get("message").toString();
+        if (statedMessage.contains(TMPL_LOOP)) {
+            return replaceLoop(statedMessage, getSubMessages(annotationMetadata));
+        } else if (statedMessage.contains(TMPL_CONDITION)) {
+            return replaceCondition(statedMessage, values);
         } else {
-            return replaceValues(message, values);
+            return replaceValues(statedMessage, values);
         }
     }
 
@@ -55,7 +60,7 @@ public class ConstraintViolation {
         List<String> subMessages = new ArrayList<>();
         var subAnnotations = annotationMetadata.getSubAnnotations();
         for (var subAnnotation : subAnnotations) {
-            var subViolation = new ConstraintViolation(null, null, subAnnotation);
+            var subViolation = new ConstraintViolation(null, null, subAnnotation, null);
             var subMessage = subViolation.getMessage();
             subMessages.add(subMessage);
         }
