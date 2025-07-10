@@ -15,8 +15,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Size {
 
-    String message() default "size must be#if(min) at least {min}#endif#if(max) at most {max}#endif.";
-
     int min() default 0;
 
     int max() default Integer.MAX_VALUE;

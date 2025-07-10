@@ -59,6 +59,16 @@ class RangeValidatorTest {
         assertEquals(expectedMessage, actualMessage);
     }
 
+    @Test
+    void shouldThrownExceptionWhenMinIsGreaterThanMax() {
+        var validator = new RangeValidator();
+        var annotation = Sample.range(1.5, 0.5);
+        var exception = assertThrows(ValidationException.class, () -> validator.initialize(annotation));
+        var actualMessage = exception.getMessage();
+        var expectedMessage = "In Range constraint, min must be less than max.";
+        assertEquals(expectedMessage, actualMessage);
+    }
+
     static class Sample {
 
         static Range range(double min, double max) {
@@ -67,11 +77,6 @@ class RangeValidatorTest {
                 @Override
                 public Class<? extends Annotation> annotationType() {
                     return Range.class;
-                }
-
-                @Override
-                public String message() {
-                    return "";
                 }
 
                 @Override

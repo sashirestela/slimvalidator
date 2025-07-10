@@ -14,7 +14,4 @@ import java.lang.annotation.Target;
 @Target({ ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Required {
-
-    String message() default "must have a value.";
-
 }

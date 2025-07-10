@@ -19,7 +19,7 @@ class ExtensionValidatorTest {
     @Test
     void shouldReturnTrueWhenValidatingObjectAgainstAnnnotation() {
         Object[][] data = {
-                { null, Sample.extension(null) },
+                { null, Sample.extension(new String[] { "doc", "txt" }) },
                 { new File(fileName), Sample.extension(new String[] { "doc", "csv", "txt" }) },
                 { Paths.get(fileName), Sample.extension(new String[] { "doc", "csv", "txt" }) }
         };
@@ -56,7 +56,7 @@ class ExtensionValidatorTest {
         validator.initialize(annotation);
         var exception = assertThrows(ValidationException.class, () -> validator.isValid("filename.mp3"));
         var actualMessage = exception.getMessage();
-        var expectedMessage = "Cannot get a extension from java.lang.String.";
+        var expectedMessage = "Object must be a File or Path.";
         assertEquals(expectedMessage, actualMessage);
     }
 
@@ -144,6 +144,13 @@ class ExtensionValidatorTest {
         assertEquals(Boolean.FALSE, validator.isValid(file.toPath()));
     }
 
+    @Test
+    void shouldGenerateCorrectMessages() {
+        var validator = new ExtensionValidator();
+        validator.initialize(Sample.extension(new String[] { "jpg", "gif", "bmp" }));
+        assertEquals("extension must be one of [jpg, gif, bmp]", validator.getMessage());
+    }
+
     static class Sample {
 
         static Extension extension(String[] value) {
@@ -152,11 +159,6 @@ class ExtensionValidatorTest {
                 @Override
                 public Class<? extends Annotation> annotationType() {
                     return Extension.class;
-                }
-
-                @Override
-                public String message() {
-                    return "";
                 }
 
                 @Override

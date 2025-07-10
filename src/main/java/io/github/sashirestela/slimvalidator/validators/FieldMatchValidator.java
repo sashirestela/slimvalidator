@@ -21,6 +21,13 @@ public class FieldMatchValidator implements ConstraintValidator<FieldMatch, Obje
     }
 
     @Override
+    public String getMessage() {
+        var message = new StringBuilder();
+        message.append(first).append(" and ").append(second).append(" must match.");
+        return message.toString();
+    }
+
+    @Override
     public boolean isValid(Object value) {
         var firstValue = Reflect.getValue(value, first);
         var secondValue = Reflect.getValue(value, second);

@@ -27,8 +27,6 @@ public @interface ObjectType {
         MAP_COLL     // Map<keyClass, Collection<baseClass>>
     }
 
-    String message() default "";
-
     Schema schema() default Schema.DIRECT;
 
     Class<?>[] baseClass();
@@ -50,8 +48,6 @@ public @interface ObjectType {
     @Target({ ElementType.FIELD })
     @Retention(RetentionPolicy.RUNTIME)
     @interface ObjectTypes {
-
-        String message() default "";
 
         ObjectType[] value();
 

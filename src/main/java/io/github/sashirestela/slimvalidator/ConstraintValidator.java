@@ -8,21 +8,18 @@ import java.lang.annotation.Annotation;
 public interface ConstraintValidator<A extends Annotation, T> {
 
     /**
-     * Set up any state using the constraint annotation's fields. It is optional to implement it.
+     * Set up any state using the constraint annotation's fields.
      * 
      * @param annotation Constraint annotation.
      */
-    default void initialize(A annotation) {
-    }
+    void initialize(A annotation);
 
     /**
-     * Prepare and get the message from this validator. Implement it when major logic is needed.
+     * Prepare and get the message from this validator.
      * 
      * @return The prepared message.
      */
-    default String getMessage() {
-        return null;
-    }
+    String getMessage();
 
     /**
      * Execute the object validation against the constraint.
