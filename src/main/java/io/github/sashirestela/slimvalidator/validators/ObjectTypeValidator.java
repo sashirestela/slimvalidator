@@ -44,19 +44,27 @@ public class ObjectTypeValidator implements ConstraintValidator<ObjectType, Obje
                 plainBaseClass.append("|");
             }
         }
-        var message = new StringBuilder();
+        var message = new StringBuilder(ObjectTypesValidator.MSG_PREFIX);
         switch (schema) {
             case DIRECT:
                 message.append(plainBaseClass);
                 break;
             case COLL:
-                message.append("Collection<").append(plainBaseClass).append(">");
+                message.append("Collection<")
+                        .append(plainBaseClass)
+                        .append(">");
                 break;
             case COLL_COLL:
-                message.append("Collection<Collection<").append(plainBaseClass).append(">>");
+                message.append("Collection<Collection<")
+                        .append(plainBaseClass)
+                        .append(">>");
                 break;
             case MAP:
-                message.append("Map<").append(keyClass.getSimpleName()).append(", ").append(plainBaseClass).append(">");
+                message.append("Map<")
+                        .append(keyClass.getSimpleName())
+                        .append(", ")
+                        .append(plainBaseClass)
+                        .append(">");
                 break;
             case MAP_COLL:
                 message.append("Map<")
@@ -78,6 +86,7 @@ public class ObjectTypeValidator implements ConstraintValidator<ObjectType, Obje
         if (!allowInnerNull) {
             message.append(" and not contain inner nulls");
         }
+        message.append(ObjectTypesValidator.MSG_POSTFIX);
         return message.toString();
     }
 
