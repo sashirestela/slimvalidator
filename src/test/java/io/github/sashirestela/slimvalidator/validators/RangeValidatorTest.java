@@ -51,7 +51,7 @@ class RangeValidatorTest {
     @Test
     void shouldThrownExceptionWhenNonNumericValueIsPassed() {
         var validator = new RangeValidator();
-        var annotation = Sample.range(2, 10);
+        var annotation = Sample.range(10);
         validator.initialize(annotation);
         var exception = assertThrows(ValidationException.class, () -> validator.isValid("text"));
         var actualMessage = exception.getMessage();
@@ -70,6 +70,10 @@ class RangeValidatorTest {
     }
 
     static class Sample {
+
+        static Range range(double max) {
+            return range(-Double.MAX_VALUE, max);
+        }
 
         static Range range(double min, double max) {
             return new Range() {

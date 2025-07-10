@@ -57,6 +57,7 @@ class ValidatorTest {
                 .name("Peter Thomas Jefferson")
                 .address(address1)
                 .reference(1001)
+                .testData(17.65)
                 .hobbies(new String[] { "dancing", "football" })
                 .relative("wife", Person.builder().firstName("Mary").lastName("Turner").age(0).build())
                 .build();
@@ -71,6 +72,7 @@ class ValidatorTest {
                 + "addresses.0.city must have a value.\n"
                 + "addresses.0.coordinate.latitude must have a value.\n"
                 + "reference type must be one of String or Collection<String> and size at most 2 or Map<String, String> and size at most 2.\n"
+                + "testData type must be one of String|Integer.\n"
                 + "hobbies size must be at least 3.\n"
                 + "relatives size must be at least 2.\n"
                 + "relatives.wife.age must be at least 1 at most 100.";

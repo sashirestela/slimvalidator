@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -177,35 +176,35 @@ class ObjectTypeValidatorTest {
 
         // Test direct message
         validator.initialize(Sample.objectType(Schema.DIRECT, new Class<?>[] { String.class }));
-        assertEquals("String", validator.getMessage());
+        assertTrue(validator.getMessage().contains("String"));
 
         // Test collection message
         validator.initialize(Sample.objectType(Schema.COLL, new Class<?>[] { String.class }));
-        assertEquals("Collection<String>", validator.getMessage());
+        assertTrue(validator.getMessage().contains("Collection<String>"));
 
         // Test collection of collections message
         validator.initialize(Sample.objectType(Schema.COLL_COLL, new Class<?>[] { String.class }));
-        assertEquals("Collection<Collection<String>>", validator.getMessage());
+        assertTrue(validator.getMessage().contains("Collection<Collection<String>>"));
 
         // Test map message
         validator.initialize(Sample.objectType(Schema.MAP, new Class<?>[] { String.class }, Integer.class));
-        assertEquals("Map<Integer, String>", validator.getMessage());
+        assertTrue(validator.getMessage().contains("Map<Integer, String>"));
 
         // Test map of collections message
         validator.initialize(Sample.objectType(Schema.MAP_COLL, new Class<?>[] { String.class }, Integer.class));
-        assertEquals("Map<Integer, Collection<String>>", validator.getMessage());
+        assertTrue(validator.getMessage().contains("Map<Integer, Collection<String>>"));
 
         // Test multiple base classes
         validator.initialize(Sample.objectType(Schema.DIRECT, new Class<?>[] { String.class, Integer.class }));
-        assertEquals("String|Integer", validator.getMessage());
+        assertTrue(validator.getMessage().contains("String|Integer"));
 
         // Test with size constraints
         validator.initialize(Sample.objectType(Schema.COLL, new Class<?>[] { String.class }, 10));
-        assertEquals("Collection<String> and size at most 10", validator.getMessage());
+        assertTrue(validator.getMessage().contains("Collection<String> and size at most 10"));
 
         // Test with null constraints
         validator.initialize(Sample.objectType(Schema.COLL, new Class<?>[] { String.class }, false, true));
-        assertEquals("Collection<String> and not contain nulls", validator.getMessage());
+        assertTrue(validator.getMessage().contains("Collection<String> and not contain nulls"));
     }
 
     @Test

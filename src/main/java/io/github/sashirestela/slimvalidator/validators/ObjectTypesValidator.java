@@ -10,6 +10,9 @@ import io.github.sashirestela.slimvalidator.constraints.ObjectType.ObjectTypes;
  */
 public class ObjectTypesValidator implements ConstraintValidator<ObjectTypes, Object> {
 
+    public static final String MSG_PREFIX = "type must be one of ";
+    public static final String MSG_POSTFIX = ".";
+
     private ObjectType[] objectTypeList;
 
     @Override
@@ -19,15 +22,18 @@ public class ObjectTypesValidator implements ConstraintValidator<ObjectTypes, Ob
 
     @Override
     public String getMessage() {
-        var message = new StringBuilder("type must be one of ");
+        var message = new StringBuilder(MSG_PREFIX);
         var itemValidator = new ObjectTypeValidator();
+        var itemMessage = "";
         for (int i = 0; i < objectTypeList.length; i++) {
             itemValidator.initialize(objectTypeList[i]);
-            message.append(itemValidator.getMessage());
+            itemMessage = itemValidator.getMessage().replace(MSG_PREFIX, "");
+            itemMessage = itemMessage.replace(MSG_POSTFIX, "");
+            message.append(itemMessage);
             if (i < objectTypeList.length - 1) {
                 message.append(" or ");
             } else {
-                message.append(".");
+                message.append(MSG_POSTFIX);
             }
         }
         return message.toString();

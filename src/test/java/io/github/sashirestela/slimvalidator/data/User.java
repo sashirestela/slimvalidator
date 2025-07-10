@@ -40,6 +40,9 @@ public class User {
     @ObjectType(schema = Schema.MAP, keyClass = String.class, baseClass = String.class, maxSize = 2)
     Object reference;
 
+    @ObjectType(baseClass = { String.class, Integer.class })
+    Object testData;
+
     @Size(min = 3)
     String[] hobbies;
 
