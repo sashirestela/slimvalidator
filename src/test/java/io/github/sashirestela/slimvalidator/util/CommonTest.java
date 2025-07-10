@@ -2,8 +2,6 @@ package io.github.sashirestela.slimvalidator.util;
 
 import org.junit.jupiter.api.Test;
 
-import javax.lang.model.type.NullType;
-
 import java.util.Arrays;
 import java.util.Map;
 
@@ -48,48 +46,6 @@ class CommonTest {
             var actualResult = Common.isPrimitiveOrWrapper(value);
             var expectedResult = false;
             assertEquals(expectedResult, actualResult);
-        }
-    }
-
-    @Test
-    void shouldReturnTrueWhenValueIsNotDefaultValueByAnnotMethodType() {
-        Object[] data = {
-                true, "test", 3.1416, 17, Void.class, Sample.ONE, new String[] { "1", "2" }
-        };
-        for (Object value : data) {
-            var actualExistsValue = Common.existsByAnnotMethodType(value);
-            var expectedExistsValue = true;
-            assertEquals(expectedExistsValue, actualExistsValue);
-        }
-    }
-
-    @Test
-    void shouldReturnFalseWhenValueIsDefaultValueByAnnotMethodType() {
-        Object[] data = {
-                false, "", Double.MIN_VALUE, -20, NullType.class, null, new String[] {}
-        };
-        for (Object value : data) {
-            var actualExistsValue = Common.existsByAnnotMethodType(value);
-            var expectedExistsValue = false;
-            assertEquals(expectedExistsValue, actualExistsValue);
-        }
-    }
-
-    @Test
-    void shouldReturnRightStringByAnnotMethodType() {
-        Object[][] data = {
-                { Void.class, "Void" },
-                { 17.65, "17.65" },
-                { -20.5, "-20.5" },
-                { 32.0, "32" },
-                { 0.0, "0" },
-                { 100, "100" },
-                { true, "true" }
-        };
-        for (Object[] value : data) {
-            var actualString = Common.toStringByAnnotMethodType(value[0]);
-            var expectedString = value[1];
-            assertEquals(expectedString, actualString);
         }
     }
 

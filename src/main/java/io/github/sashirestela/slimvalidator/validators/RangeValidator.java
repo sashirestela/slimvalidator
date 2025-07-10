@@ -4,6 +4,8 @@ import io.github.sashirestela.slimvalidator.ConstraintValidator;
 import io.github.sashirestela.slimvalidator.constraints.Range;
 import io.github.sashirestela.slimvalidator.exception.ValidationException;
 
+import java.text.DecimalFormat;
+
 /**
  * Checks that a value is within a closed range. Applies to fields of any numeric type.
  */
@@ -16,6 +18,25 @@ public class RangeValidator implements ConstraintValidator<Range, Object> {
     public void initialize(Range annotation) {
         min = annotation.min();
         max = annotation.max();
+        if (min >= max) {
+            throw new ValidationException("In Range constraint, min must be less than max.");
+        }
+    }
+
+    @Override
+    public String getMessage() {
+        var decFormat = new DecimalFormat("#.##");
+        decFormat.setDecimalSeparatorAlwaysShown(false);
+        var message = new StringBuilder();
+        message.append("must be");
+        if (min < Double.MAX_VALUE) {
+            message.append(" at least ").append(decFormat.format(min));
+        }
+        if (max < Double.MAX_VALUE) {
+            message.append(" at most ").append(decFormat.format(max));
+        }
+        message.append(".");
+        return message.toString();
     }
 
     @Override

@@ -20,6 +20,23 @@ public class SizeValidator implements ConstraintValidator<Size, Object> {
     public void initialize(Size annotation) {
         min = annotation.min();
         max = annotation.max();
+        if (min > max) {
+            throw new ValidationException("In Size constraint, min must be less or equal than max.");
+        }
+    }
+
+    @Override
+    public String getMessage() {
+        var message = new StringBuilder();
+        message.append("size must be");
+        if (min > 0) {
+            message.append(" at least ").append(min);
+        }
+        if (max < Integer.MAX_VALUE) {
+            message.append(" at most ").append(max);
+        }
+        message.append(".");
+        return message.toString();
     }
 
     @Override

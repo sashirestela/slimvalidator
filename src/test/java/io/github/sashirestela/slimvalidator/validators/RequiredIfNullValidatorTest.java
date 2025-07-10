@@ -55,11 +55,6 @@ class RequiredIfNullValidatorTest {
                 }
 
                 @Override
-                public String message() {
-                    return "";
-                }
-
-                @Override
                 public String[] fields() {
                     return fields;
                 }

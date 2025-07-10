@@ -18,8 +18,18 @@ public class RequiredIfNullValidator implements ConstraintValidator<RequiredIfNu
 
     @Override
     public void initialize(RequiredIfNull annotation) {
-        fields = annotation.fields();
+        fields = annotation.fields().clone();
         dependsOn = annotation.dependsOn();
+    }
+
+    @Override
+    public String getMessage() {
+        var message = new StringBuilder();
+        message.append(Arrays.toString(fields))
+                .append(" must have a value when ")
+                .append(dependsOn)
+                .append(" is null.");
+        return message.toString();
     }
 
     @Override

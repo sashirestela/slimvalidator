@@ -18,7 +18,14 @@ public class ExtensionValidator implements ConstraintValidator<Extension, Object
 
     @Override
     public void initialize(Extension annotation) {
-        extensions = annotation.value();
+        extensions = annotation.value().clone();
+    }
+
+    @Override
+    public String getMessage() {
+        var message = new StringBuilder();
+        message.append("extension must be one of ").append(Arrays.toString(extensions));
+        return message.toString();
     }
 
     @Override
@@ -36,10 +43,8 @@ public class ExtensionValidator implements ConstraintValidator<Extension, Object
             fileName = ((File) value).getName();
         } else if (value instanceof Path) {
             fileName = ((Path) value).getFileName().toString();
-        } else if (value instanceof String) {
-            throw new ValidationException("Cannot get a extension from java.lang.String.");
         } else {
-            throw new ValidationException("Input must be a File or Path.");
+            throw new ValidationException("Object must be a File or Path.");
         }
 
         if (fileName == null || fileName.isEmpty()) {

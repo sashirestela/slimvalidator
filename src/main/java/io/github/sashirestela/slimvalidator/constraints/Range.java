@@ -15,9 +15,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Range {
 
-    String message() default "must be#if(min) at least {min}#endif#if(max) at most {max}#endif.";
-
-    double min() default Double.MIN_VALUE;
+    double min() default Double.MAX_VALUE;
 
     double max() default Double.MAX_VALUE;
 

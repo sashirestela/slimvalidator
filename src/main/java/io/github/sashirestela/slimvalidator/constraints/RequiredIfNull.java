@@ -15,8 +15,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface RequiredIfNull {
 
-    String message() default "{fields} must have a value when {dependsOn} is null.";
-
     String[] fields();
 
     String dependsOn();

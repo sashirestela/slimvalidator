@@ -264,11 +264,6 @@ class ObjectTypeValidatorTest {
                 }
 
                 @Override
-                public String message() {
-                    return "";
-                }
-
-                @Override
                 public Schema schema() {
                     return schema;
                 }

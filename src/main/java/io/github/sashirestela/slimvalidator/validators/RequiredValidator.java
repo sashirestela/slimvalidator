@@ -12,24 +12,30 @@ import java.util.Map;
 public class RequiredValidator implements ConstraintValidator<Required, Object> {
 
     @Override
-    public boolean isValid(Object value) {
-        if (value == null) {
-            return false;
-        } else {
-            return getGroupSize(value) != 0;
-        }
+    public void initialize(Required annotation) {
+        // No fields in this annotation
     }
 
-    private int getGroupSize(Object value) {
+    @Override
+    public boolean isValid(Object value) {
+        return (value != null && !isEmpty(value));
+    }
+
+    @Override
+    public String getMessage() {
+        return "must have a value.";
+    }
+
+    private boolean isEmpty(Object value) {
+        int size = 1;
         if (value instanceof Collection) {
-            return ((Collection<?>) value).size();
+            size = ((Collection<?>) value).size();
         } else if (value instanceof Map) {
-            return ((Map<?, ?>) value).size();
+            size = ((Map<?, ?>) value).size();
         } else if (value.getClass().isArray()) {
-            return ((Object[]) value).length;
-        } else {
-            return -1;
+            size = ((Object[]) value).length;
         }
+        return (size == 0);
     }
 
 }

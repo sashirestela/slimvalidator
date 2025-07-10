@@ -54,11 +54,6 @@ class FieldMatchValidatorTest {
                 }
 
                 @Override
-                public String message() {
-                    return "";
-                }
-
-                @Override
                 public String first() {
                     return first;
                 }

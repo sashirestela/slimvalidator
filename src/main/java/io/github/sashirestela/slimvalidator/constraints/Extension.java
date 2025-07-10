@@ -15,8 +15,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Extension {
 
-    String message() default "extension must be one of {value}.";
-
     String[] value();
 
 }

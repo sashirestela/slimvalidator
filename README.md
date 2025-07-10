@@ -57,8 +57,8 @@ class Person {
   @Valid
   Address address;
 
-  @ObjectType(baseClass = String.class)
-  @ObjectType(baseClass = String.class, firstGroup = true, maxSize = 3)
+  @ObjectType(baseClass = {String.class})
+  @ObjectType(schema = Schema.COLL, baseClass = {String.class}, maxSize = 3)
   Object reference;
 
   @Extension({"jpg", "png", "bmp"})
@@ -145,7 +145,7 @@ income must be at least 2000.
 hobbies size must be at least 3 at most 5.
 address.apartment size must be at most 4.
 address.city must have a value.
-reference type must be or String or Collection<String> (max 3 items).
+reference type must be one of String or Collection<String> and size at most 3.
 photograph extension must be one of [jpg, png, bmp].
 in user [username] must have a value when email is null.
 ```
@@ -195,7 +195,7 @@ NOTE: Requires Java 11 or greater.
 - **Description**: Checks that a value is within a closed range.
 - **Applies to**: Fields of any numeric type.
 - **Parameters**:
-    - _min_: The lowest value of the range. By default is Double.MIN_VALUE.
+    - _min_: The lowest value of the range. By default is Double.MAX_VALUE.
     - _max_: The greatest value of the range. By default is Double.MAX_VALUE.
 - **Error messages**:
     - If _min_ was set and the value is lower:
@@ -282,7 +282,7 @@ NOTE: Requires Java 11 or greater.
 
 ### @Valid
 - **Description**: Flag to do nested validation for fields without any constraint.
-- **Applies to**: Fields of custom classes that do not have any constraint but it requires to validate their nested fields. Any filed-level constraint enable nested validation automatically.
+- **Applies to**: Fields of custom classes that do not have any constraint but it requires to validate their nested fields. Any field-level constraint enable nested validation automatically.
 - **Parameters**:
     - _(none)_.
 - **Error messages**:
@@ -345,23 +345,11 @@ Create a new annotation `YourNewConstraint` with the following template:
 @Retention(RetentionPolicy.RUNTIME)
 public @interface YourNewConstraint {
 
-    String message() default "<your custom message when validation fails>.";
-
-    // Add any other annotation methods needed by your new constraint.
+    // Add any annotation methods needed by your new constraint.
 
 }
 ```
 - Use the `@Constraint` annotation to link `YourNewConstraint` annotation to `YourNewValidator` class.
-- Define at least the `message()` method. This is the message to show when validation fails. Here you can use optionally:
-  - Curly brackets to reference other annotation methods. For example: `some text with {max} value.`. The message includes the value of a sample annotation method `max()`.
-  - Conditional segments based on the value of some annotation method. For example: `#if(max)some text with {max} value.#endif`. The message includes the value of an annotation method `max()` and it will be shown only if the `max()` is not empty. In this context, "empty" depends on the the annotation method type:
-    - If boolean, empty means the value is false.
-    - If String, empty means the text is empty.
-    - If double, empty means the number is Double.MIN_VALUE or Double.MAX_VALUE.
-    - If int, empty means the number is zero or Integer.MAX_VALUE.
-    - If Class, empty means the class is equals to javax.lang.model.type.NullType.
-    - If array, empty means the array has no elements.
-  - Loop segments for constraint annotations defined as arrays. For example: `type must be#for(value) or {message}#endfor.`. That message will concatenate the `message()` of each constraint in the constraint array. The argument `value` is not meaningful.
 - Add any other annotation methods needed by your new constraint.
 
 ### New Validator Class
@@ -382,11 +370,10 @@ public class YourNewValidator implements ConstraintValidator<YourNewConstraint, 
 
     @Override
     public String getMessage() {
-        // Implement this method when complex logic is needed to build the message
-        // This is optional - if not implemented, the message from the annotation will be used
+        // This the message to output when object violates the constraint.
+        // Prepare it using the annotation methods values gathered in initialize().
         // Example:
         // return "Custom message with " + annotMethod1 + " and " + annotMethod2;
-        return null; // Return null to use the annotation's message
     }
 
     @Override
@@ -404,9 +391,9 @@ public class YourNewValidator implements ConstraintValidator<YourNewConstraint, 
 }
 ```
 - Implement the `ConstraintValidator<A, T>` interface, where A represents YourNewConstraint and T represents the class of the objects to validate, in this case, you can use `Object` if your validations applies to more than one class.
-- Create as field members as annotation methods you have in YourNewConstraint, excluding message().
+- Create as field members as annotation methods you have in YourNewConstraint.
 - Override the `initialize()` method to capture the annotation method values in your field members.
-- Override the `getMessage()` method (optional) when you need complex logic to build the error message. If not implemented or returns null, the framework will use the message from the annotation with template processing.
+- Override the `getMessage()` method to build the error message using the annotation method values.
 - Override the `isValid()` method to do the validation logic. For field-level constraints only: your first validation step must return true if the object to validate is null, because we have the annotation `@Required` to validate that condition, we don't want to evaluate that nullity here.
 
 ## 💼 Contributing
