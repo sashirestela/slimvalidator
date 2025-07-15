@@ -8,6 +8,7 @@ import java.io.File;
 import java.lang.annotation.Annotation;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -151,9 +152,30 @@ class ExtensionValidatorTest {
         assertEquals("extension must be one of [jpg, gif, bmp]", validator.getMessage());
     }
 
+    @Test
+    void shouldReturnTrueWhenValidatingNonExpectedTypesWithVariableType() {
+        Object[][] data = {
+                { "testfile.txt", Sample.extension(new String[] { "doc", "txt" }, true) },
+                { 987.65, Sample.extension(new String[] { "doc", "csv", "txt" }, true) },
+                { List.of(fileName), Sample.extension(new String[] { "doc", "csv", "txt" }, true) }
+        };
+        for (Object[] value : data) {
+            var validator = new ExtensionValidator();
+            var annotation = (Extension) value[1];
+            validator.initialize(annotation);
+            var actualResult = validator.isValid(value[0]);
+            var expectedResult = true;
+            assertEquals(expectedResult, actualResult);
+        }
+    }
+
     static class Sample {
 
         static Extension extension(String[] value) {
+            return extension(value, false);
+        }
+
+        static Extension extension(String[] value, boolean isVariableType) {
             return new Extension() {
 
                 @Override
@@ -164,6 +186,11 @@ class ExtensionValidatorTest {
                 @Override
                 public String[] value() {
                     return value;
+                }
+
+                @Override
+                public boolean isVariableType() {
+                    return isVariableType;
                 }
 
             };

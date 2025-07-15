@@ -15,10 +15,12 @@ import java.util.Arrays;
 public class ExtensionValidator implements ConstraintValidator<Extension, Object> {
 
     private String[] extensions;
+    private boolean isVariableType;
 
     @Override
     public void initialize(Extension annotation) {
         extensions = annotation.value().clone();
+        isVariableType = annotation.isVariableType();
     }
 
     @Override
@@ -33,10 +35,18 @@ public class ExtensionValidator implements ConstraintValidator<Extension, Object
         if (value == null) {
             return true;
         }
-        return Arrays.stream(extensions).anyMatch(ext -> ext.equals(getExtension(value)));
+        try {
+            return Arrays.stream(extensions).anyMatch(ext -> ext.equals(getExtension(value)));
+        } catch (IllegalArgumentException e) {
+            if (isVariableType) {
+                return true;
+            } else {
+                throw new ValidationException("Object must be a File or Path.");
+            }
+        }
     }
 
-    private String getExtension(Object value) throws IllegalArgumentException {
+    private String getExtension(Object value) {
         String fileName;
 
         if (value instanceof File) {
@@ -44,7 +54,7 @@ public class ExtensionValidator implements ConstraintValidator<Extension, Object
         } else if (value instanceof Path) {
             fileName = ((Path) value).getFileName().toString();
         } else {
-            throw new ValidationException("Object must be a File or Path.");
+            throw new IllegalArgumentException();
         }
 
         if (fileName == null || fileName.isEmpty()) {

@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import java.lang.annotation.Annotation;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -111,7 +112,7 @@ class SizeValidatorTest {
         validator.initialize(annotation);
         var exception = assertThrows(ValidationException.class, () -> validator.isValid(123));
         var actualMessage = exception.getMessage();
-        var expectedMessage = "Cannot get a size from java.lang.Integer.";
+        var expectedMessage = "Cannot get a size from Integer.";
         assertEquals(expectedMessage, actualMessage);
     }
 
@@ -168,6 +169,24 @@ class SizeValidatorTest {
         assertEquals(expectedResult, actualResult);
     }
 
+    @Test
+    void shouldReturnTrueWhenValidatingNonExpectedTypesWithVariableType() {
+        Object[][] data = {
+                { 123.45, Sample.size(2, 10, true) },
+                { Boolean.TRUE, Sample.size(2, 10, true) },
+                { new Object(), Sample.size(2, 10, true) },
+                { List.of("a", "b", "c"), Sample.size(2, 10, true) }
+        };
+        for (Object[] value : data) {
+            var validator = new SizeValidator();
+            var annotation = (Size) value[1];
+            validator.initialize(annotation);
+            var actualResult = validator.isValid(value[0]);
+            var expectedResult = true;
+            assertEquals(expectedResult, actualResult);
+        }
+    }
+
     private static Map<String, String> createMap(int size) {
         Map<String, String> map = new HashMap<>();
         for (int i = 0; i < size; i++) {
@@ -179,6 +198,10 @@ class SizeValidatorTest {
     static class Sample {
 
         static Size size(int min, int max) {
+            return size(min, max, false);
+        }
+
+        static Size size(int min, int max, boolean isVariableType) {
             return new Size() {
 
                 @Override
@@ -194,6 +217,11 @@ class SizeValidatorTest {
                 @Override
                 public int max() {
                     return max;
+                }
+
+                @Override
+                public boolean isVariableType() {
+                    return isVariableType;
                 }
 
             };

@@ -19,4 +19,6 @@ public @interface Size {
 
     int max() default Integer.MAX_VALUE;
 
+    boolean isVariableType() default false;
+
 }

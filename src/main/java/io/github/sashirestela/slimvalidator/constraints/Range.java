@@ -19,4 +19,6 @@ public @interface Range {
 
     double max() default Double.MAX_VALUE;
 
+    boolean isVariableType() default false;
+
 }
