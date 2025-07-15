@@ -129,6 +129,7 @@ person.setHobbies(new String[] {"dancing", "running"});
 person.setAddress(address);
 person.setReference(List.of(10, 20));
 person.setPhotograph(Paths.get("src/test/resources/sample.txt"));
+person.setUser(user);
 
 /* Validate objects */
 
@@ -192,11 +193,16 @@ NOTE: Requires Java 11 or greater.
     ```
 
 ### @Range
-- **Description**: Checks that a value is within a closed range.
+- **Description**: Checks that a numeric value is within a closed range.
 - **Applies to**: Fields of any numeric type.
+- **Exceptions**:
+    - When neither min nor max are set.
+    - When min is not less than max.
+    - When the value is of an unexpected type, unless isVariableType is true.
 - **Parameters**:
-    - _min_: The lowest value of the range. By default is Double.MAX_VALUE.
+    - _min_: The lowest value of the range. By default is -Double.MAX_VALUE.
     - _max_: The greatest value of the range. By default is Double.MAX_VALUE.
+    - _isVariableType_: Whether the field type is variable. The default value is false.
 - **Error messages**:
     - If _min_ was set and the value is lower:
         - _must be at least {min}._
@@ -213,9 +219,13 @@ NOTE: Requires Java 11 or greater.
 ### @Size
 - **Description**: Checks that a text's length or a group's size is within a closed range.
 - **Applies to**: Fields of type: String, Collection, Map, Array.
+- **Exceptions**:
+    - When min is greater than max.
+    - When the value is of an unexpected type, unless isVariableType is true.
 - **Parameters**:
     - _min_: The lowest value of the length or size. By default is 0.
     - _max_: The greatest value of the length or size. By default is Integer.MAX_VALUE.
+    - _isVariableType_: Whether the field type is variable. The default value is false.
 - **Error messages**:
     - If _min_ was set and the length or size is lower:
         - _size must be at least {min}._
@@ -231,9 +241,14 @@ NOTE: Requires Java 11 or greater.
 
 ### @Extension
 - **Description**: Checks that the file extension is one of an expected list.
-- **Applies to**: Fields of type: java.nio.file.Path, java.io.File.
+- **Applies to**: Fields of type: java.nio.file.Path or java.io.File.
+- **Exceptions**:
+    - When the underlying filename is empty.
+    - When the filename extension is bad formed.
+    - When the value is of an unexpected type, unless isVariableType is true.
 - **Parameters**:
     - _value_: Array of expected extensions. Mandatory.
+    - _isVariableType_: Whether the field type is variable. The default value is false.
 - **Error messages**:
     - If file extension is not any of the _value_ array:
         - _extension must be one of {value}._
