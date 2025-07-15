@@ -17,4 +17,6 @@ public @interface Extension {
 
     String[] value();
 
+    boolean isVariableType() default false;
+
 }
